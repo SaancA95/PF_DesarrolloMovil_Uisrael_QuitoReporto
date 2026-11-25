@@ -4,8 +4,9 @@ using QuitoReporto.App.Views.Auth;
 namespace QuitoReporto.App.Helpers
 {
     /// <summary>
-    /// Pinta la barra de estado del sistema según la pantalla: azul noche en el inicio de sesión
-    /// (iconos claros) y del color de la superficie en el resto (iconos oscuros en modo claro).
+    /// Pinta la barra de estado del sistema del mismo color que el fondo de la pantalla actual
+    /// (azul noche en el inicio de sesión). Todas las pantallas de la app son oscuras, así que los
+    /// iconos de la barra (hora, señal, batería) siempre van claros, sin importar el tema del teléfono.
     /// </summary>
     public static class BarraDeEstado
     {
@@ -14,17 +15,12 @@ namespace QuitoReporto.App.Helpers
 #if ANDROID || IOS
             try
             {
-                var oscuro = Application.Current?.RequestedTheme == AppTheme.Dark;
-                if (pagina is LoginPage)
-                {
-                    CommunityToolkit.Maui.Core.Platform.StatusBar.SetColor(Recurso("Ink"));
-                    CommunityToolkit.Maui.Core.Platform.StatusBar.SetStyle(StatusBarStyle.LightContent);
-                }
-                else
-                {
-                    CommunityToolkit.Maui.Core.Platform.StatusBar.SetColor(Recurso(oscuro ? "SurfaceDark" : "Surface"));
-                    CommunityToolkit.Maui.Core.Platform.StatusBar.SetStyle(oscuro ? StatusBarStyle.LightContent : StatusBarStyle.DarkContent);
-                }
+                var color = pagina is LoginPage
+                    ? Recurso("Ink")
+                    : pagina?.BackgroundColor ?? Recurso("Navy");
+
+                CommunityToolkit.Maui.Core.Platform.StatusBar.SetColor(color);
+                CommunityToolkit.Maui.Core.Platform.StatusBar.SetStyle(StatusBarStyle.LightContent);
             }
             catch
             {
@@ -34,6 +30,6 @@ namespace QuitoReporto.App.Helpers
         }
 
         private static Color Recurso(string clave) =>
-            Application.Current?.Resources.TryGetValue(clave, out var valor) == true && valor is Color c ? c : Colors.White;
+            Application.Current?.Resources.TryGetValue(clave, out var valor) == true && valor is Color c ? c : Colors.Black;
     }
 }

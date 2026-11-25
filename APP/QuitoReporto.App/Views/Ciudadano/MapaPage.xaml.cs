@@ -46,6 +46,10 @@ namespace QuitoReporto.App.Views.Ciudadano
             map.Navigator.OverrideZoomBounds = new MMinMax(0.5, 150);
             map.Navigator.CenterOnAndZoomTo(APunto(Constantes.QuitoLatitud, Constantes.QuitoLongitud), 20);
 
+            // Mapsui muestra un contador de FPS cuando hay un depurador conectado; no es para el usuario
+            foreach (var widget in map.Widgets.OfType<Mapsui.Widgets.InfoWidgets.PerformanceWidget>())
+                widget.Enabled = false;
+
             map.Tapped += AlTocarMapa;
             vm.ReportesActualizados += (_, _) => MainThread.BeginInvokeOnMainThread(DibujarReportes);
             vm.CentrarEnUbicacion += (_, _) => MainThread.BeginInvokeOnMainThread(CentrarEnUbicacion);
@@ -54,6 +58,9 @@ namespace QuitoReporto.App.Views.Ciudadano
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            foreach (var widget in Mapa.Map.Widgets.OfType<Mapsui.Widgets.InfoWidgets.PerformanceWidget>())
+                widget.Enabled = false;
+
             if (!iniciado)
             {
                 iniciado = true;

@@ -10,7 +10,15 @@
              Shell.NavBarIsVisible="False"
              BackgroundColor="{StaticResource NavyDeep}">
 
-    <RefreshView IsRefreshing="{Binding Refrescando}" Command="{Binding CargarCommand}">
+    <Grid RowDefinitions="Auto,*">
+
+    <!-- Encabezado fijo: fuera de la lista para que nunca quede cortado al desplazarse -->
+    <VerticalStackLayout Padding="28,20,28,8" Spacing="0">
+        <Label Text="Panel general" Style="{StaticResource TextoTitulo}" />
+        <Label Text="{Binding Saludo}" Style="{StaticResource TextoSecundario}" LineBreakMode="TailTruncation" />
+    </VerticalStackLayout>
+
+    <RefreshView Grid.Row="1" IsRefreshing="{Binding Refrescando}" Command="{Binding CargarCommand}">
         <CollectionView x:Name="Lista" ItemsSource="{Binding Reportes}" SelectionMode="Single"
                         SelectionChangedCommand="{Binding AbrirCommand}"
                         SelectionChangedCommandParameter="{Binding SelectedItem, Source={x:Reference Lista}, x:DataType=CollectionView}">
@@ -20,36 +28,31 @@
 
             <!-- CU-10 Estadísticas -->
             <CollectionView.Header>
-                <VerticalStackLayout Padding="28,28,28,12" Spacing="18">
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                        <Label Text="Panel general" Style="{StaticResource TextoTitulo}" />
-                        <Label Grid.Column="1" Text="{Binding Saludo}" FontSize="26" HorizontalTextAlignment="End"
-                               VerticalOptions="Center" LineBreakMode="TailTruncation" />
-                    </Grid>
+                <VerticalStackLayout Padding="28,8,28,12" Spacing="18">
 
                     <!-- Totales por estado -->
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
-                        <Border Style="{StaticResource TarjetaClara}" Padding="14,12">
+                        <Border Style="{StaticResource TarjetaClara}" Padding="10,12">
                             <VerticalStackLayout Spacing="4">
-                                <Label Text="{Binding Estadisticas.Recibidos}" Style="{StaticResource TextoMetrica}" />
-                                <Border Style="{StaticResource Etiqueta}" BackgroundColor="{StaticResource Naranja}" Padding="10,2">
-                                    <Label Text="Recibido" FontSize="18" />
+                                <Label Text="{Binding Estadisticas.Recibidos}" Style="{StaticResource TextoMetrica}" HorizontalOptions="Center" />
+                                <Border Style="{StaticResource EtiquetaMetrica}" BackgroundColor="{StaticResource Naranja}">
+                                    <Label Text="Recibido" Style="{StaticResource TextoPastilla}" />
                                 </Border>
                             </VerticalStackLayout>
                         </Border>
-                        <Border Grid.Column="1" Style="{StaticResource TarjetaClara}" Padding="14,12">
+                        <Border Grid.Column="1" Style="{StaticResource TarjetaClara}" Padding="10,12">
                             <VerticalStackLayout Spacing="4">
-                                <Label Text="{Binding Estadisticas.EnProceso}" Style="{StaticResource TextoMetrica}" />
-                                <Border Style="{StaticResource Etiqueta}" BackgroundColor="{StaticResource Morado}" Padding="10,2">
-                                    <Label Text="En proceso" FontSize="18" />
+                                <Label Text="{Binding Estadisticas.EnProceso}" Style="{StaticResource TextoMetrica}" HorizontalOptions="Center" />
+                                <Border Style="{StaticResource EtiquetaMetrica}" BackgroundColor="{StaticResource Morado}">
+                                    <Label Text="En proceso" Style="{StaticResource TextoPastilla}" />
                                 </Border>
                             </VerticalStackLayout>
                         </Border>
-                        <Border Grid.Column="2" Style="{StaticResource TarjetaClara}" Padding="14,12">
+                        <Border Grid.Column="2" Style="{StaticResource TarjetaClara}" Padding="10,12">
                             <VerticalStackLayout Spacing="4">
-                                <Label Text="{Binding Estadisticas.Resueltos}" Style="{StaticResource TextoMetrica}" />
-                                <Border Style="{StaticResource Etiqueta}" BackgroundColor="{StaticResource Verde}" Padding="10,2">
-                                    <Label Text="Resueltos" FontSize="18" />
+                                <Label Text="{Binding Estadisticas.Resueltos}" Style="{StaticResource TextoMetrica}" HorizontalOptions="Center" />
+                                <Border Style="{StaticResource EtiquetaMetrica}" BackgroundColor="{StaticResource Verde}">
+                                    <Label Text="Resueltos" Style="{StaticResource TextoPastilla}" />
                                 </Border>
                             </VerticalStackLayout>
                         </Border>
@@ -62,10 +65,12 @@
                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding Estadisticas.PorCategoria}" Spacing="8">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate x:DataType="m:Conteo">
-                                        <Grid ColumnDefinitions="90,*,Auto" ColumnSpacing="8">
+                                        <Grid ColumnDefinitions="90,*,Auto" ColumnSpacing="12">
                                             <Label Text="{Binding Nombre}" FontSize="20" TextColor="{StaticResource Rojo}" VerticalOptions="Center" />
-                                            <ProgressBar Grid.Column="1" Progress="{Binding Proporcion}" VerticalOptions="Center" />
-                                            <Label Grid.Column="2" Text="{Binding Cantidad}" FontSize="20" TextColor="{StaticResource Black}" />
+                                            <Border Grid.Column="1" Style="{StaticResource BarraFondo}">
+                                                <BoxView Style="{StaticResource BarraRelleno}" ScaleX="{Binding Proporcion}" />
+                                            </Border>
+                                            <Label Grid.Column="2" Text="{Binding Cantidad}" FontSize="20" TextColor="{StaticResource Black}" VerticalOptions="Center" MinimumWidthRequest="16" HorizontalTextAlignment="End" />
                                         </Grid>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
@@ -80,11 +85,13 @@
                             <VerticalStackLayout BindableLayout.ItemsSource="{Binding Estadisticas.PorZona}" Spacing="8">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate x:DataType="m:Conteo">
-                                        <Grid ColumnDefinitions="110,*,Auto" ColumnSpacing="8">
+                                        <Grid ColumnDefinitions="110,*,Auto" ColumnSpacing="12">
                                             <Label Text="{Binding Nombre}" FontSize="20" TextColor="{StaticResource Rojo}"
                                                    LineBreakMode="TailTruncation" VerticalOptions="Center" />
-                                            <ProgressBar Grid.Column="1" Progress="{Binding Proporcion}" VerticalOptions="Center" />
-                                            <Label Grid.Column="2" Text="{Binding Cantidad}" FontSize="20" TextColor="{StaticResource Black}" />
+                                            <Border Grid.Column="1" Style="{StaticResource BarraFondo}">
+                                                <BoxView Style="{StaticResource BarraRelleno}" ScaleX="{Binding Proporcion}" />
+                                            </Border>
+                                            <Label Grid.Column="2" Text="{Binding Cantidad}" FontSize="20" TextColor="{StaticResource Black}" VerticalOptions="Center" MinimumWidthRequest="16" HorizontalTextAlignment="End" />
                                         </Grid>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
@@ -164,4 +171,5 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
     </RefreshView>
+    </Grid>
 </ContentPage>

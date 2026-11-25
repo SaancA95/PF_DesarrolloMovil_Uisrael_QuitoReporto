@@ -6,7 +6,7 @@
         /// IP local de la PC donde corre la API (ver con "ipconfig", adaptador Wi-Fi).
         /// El celular y la PC deben estar conectados a la misma red Wi-Fi.
         /// </summary>
-        public const string IpPc = "192.168.18.4";
+        public const string IpPc = "192.168.18.9";
 
         public const int PuertoApi = 5184;
 
