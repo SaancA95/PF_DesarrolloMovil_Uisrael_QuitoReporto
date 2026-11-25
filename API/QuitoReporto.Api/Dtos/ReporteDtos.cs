@@ -18,10 +18,10 @@ namespace QuitoReporto.Api.Dtos
         [Range(1, int.MaxValue, ErrorMessage = "Selecciona una categoría.")]
         public int CategoriaId { get; set; }
 
-        [Range(-90, 90, ErrorMessage = "Latitud fuera de rango.")]
+        [Range(-90.0, 90.0, ErrorMessage = "Latitud fuera de rango.")]
         public double Latitud { get; set; }
 
-        [Range(-180, 180, ErrorMessage = "Longitud fuera de rango.")]
+        [Range(-180.0, 180.0, ErrorMessage = "Longitud fuera de rango.")]
         public double Longitud { get; set; }
 
         [StringLength(300)]

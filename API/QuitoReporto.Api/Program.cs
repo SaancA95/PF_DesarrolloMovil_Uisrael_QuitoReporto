@@ -7,8 +7,12 @@ using Microsoft.IdentityModel.Tokens;
 using QuitoReporto.Api.Data;
 using QuitoReporto.Api.Models;
 using QuitoReporto.Api.Services;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Base de datos PostgreSQL. En las pruebas automatizadas (entorno "Testing") se usa una base en memoria.
 if (!builder.Environment.IsEnvironment("Testing"))
@@ -76,6 +80,14 @@ if (app.Services.GetRequiredService<IAlmacenFotos>() is AlmacenFotosLocal almace
         RequestPath = AlmacenFotosLocal.RutaPublica
     });
 }
+
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(CultureInfo.InvariantCulture),
+    SupportedCultures = [CultureInfo.InvariantCulture],
+    SupportedUICultures = [CultureInfo.InvariantCulture]
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

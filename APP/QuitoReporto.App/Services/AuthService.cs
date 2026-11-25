@@ -39,6 +39,12 @@ namespace QuitoReporto.App.Services
                 UsuarioActual = usuarioJson is null ? null : JsonSerializer.Deserialize<Usuario>(usuarioJson, ApiCliente.Json);
                 return UsuarioActual is not null;
             }
+            catch (Exception)
+            {
+                // Almacén dañado o datos ilegibles: se descarta la sesión guardada.
+                try { await CerrarSesionAsync(); } catch { }
+                return false;
+            }
         }
 
         public async Task<Usuario> IniciarSesionAsync(string correo, string clave)
@@ -65,7 +71,7 @@ namespace QuitoReporto.App.Services
         {
             UsuarioActual = null;
             api.EstablecerToken(null);
-            SecureStorage.Default.Remove(Constantes.ClaveToken);
+            try { SecureStorage.Default.Remove(Constantes.ClaveToken); } catch { }
             Preferences.Default.Remove(Constantes.ClaveUsuario);
             return Task.CompletedTask;
         }
@@ -74,9 +80,26 @@ namespace QuitoReporto.App.Services
         {
             api.EstablecerToken(respuesta.Token);
             UsuarioActual = respuesta.Usuario;
-            await SecureStorage.Default.SetAsync(Constantes.ClaveToken, respuesta.Token);
             Preferences.Default.Set(Constantes.ClaveUsuario, JsonSerializer.Serialize(respuesta.Usuario, ApiCliente.Json));
+
+            try
+            {
+                await SecureStorage.Default.SetAsync(Constantes.ClaveToken, respuesta.Token);
+            }
+            catch
+            {
+                // El almacén cifrado puede quedar corrupto en Android: se reinicia y se reintenta una vez.
+                try
+                {
+                    SecureStorage.Default.RemoveAll();
+                    await SecureStorage.Default.SetAsync(Constantes.ClaveToken, respuesta.Token);
+                }
+                catch { /* la sesión queda solo en memoria */ }
+
+            }
+
         }
+
 
         private sealed class Mensaje
         {
@@ -85,3 +108,5 @@ namespace QuitoReporto.App.Services
         }
     }
 }
+
+

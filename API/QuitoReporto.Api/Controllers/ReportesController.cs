@@ -73,12 +73,20 @@ namespace QuitoReporto.Api.Controllers
             return detalle is null ? NotFound(new MensajeDto("El reporte no existe.")) : detalle;
         }
 
+
+
         // CU-02 Crear reporte (incluye CU-03 foto y CU-04 ubicación)
         [HttpPost]
         [RequestSizeLimit(TamanoMaximoFoto + 1024 * 1024)]
         public async Task<ActionResult<ReporteDetalleDto>> Crear([FromForm] CrearReporteDto dto, CancellationToken ct)
         {
+            Console.WriteLine($"Cultura={System.Globalization.CultureInfo.CurrentCulture.Name} Lat={dto.Latitud:R} Lon={dto.Longitud:R}");
+
+
+            if (double.IsNaN(dto.Latitud) || double.IsNaN(dto.Longitud))
+                return BadRequest(new MensajeDto("La ubicación no es válida."));
             var usuarioId = User.ObtenerUsuarioId();
+
             if (usuarioId is null) return Unauthorized();
 
             if (!await db.Categorias.AnyAsync(c => c.Id == dto.CategoriaId, ct))
