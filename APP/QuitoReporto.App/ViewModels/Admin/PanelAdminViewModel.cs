@@ -32,9 +32,6 @@ namespace QuitoReporto.App.ViewModels.Admin
         public partial string Zona { get; set; } = string.Empty;
 
         [ObservableProperty]
-        public partial bool Refrescando { get; set; }
-
-        [ObservableProperty]
         public partial bool SinResultados { get; set; }
 
         public string Saludo => $"Panel de {auth.UsuarioActual?.Nombre ?? "administración"}";
@@ -42,15 +39,24 @@ namespace QuitoReporto.App.ViewModels.Admin
         partial void OnCategoriaSeleccionadaChanged(OpcionCategoria? value) => CargarReportesCommand.Execute(null);
         partial void OnEstadoSeleccionadoChanged(OpcionEstado? value) => CargarReportesCommand.Execute(null);
 
-        [RelayCommand]
+        // AllowConcurrentExecutions: el RefreshView se desactiva cuando el comando "no puede ejecutarse",
+        // y si el usuario desliza mientras ya hay una carga en curso el spinner quedaba girando para siempre.
+        // EjecutarAsync ya evita cargas duplicadas con Ocupado.
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task CargarAsync()
         {
-            await EjecutarAsync(async () =>
+            try
             {
-                Estadisticas = await reportes.ObtenerEstadisticasAsync();
-                await ConsultarReportesAsync();
-            }, "No se pudo cargar el panel");
-            Refrescando = false;
+                await EjecutarAsync(async () =>
+                {
+                    Estadisticas = await reportes.ObtenerEstadisticasAsync();
+                    await ConsultarReportesAsync();
+                }, "No se pudo cargar el panel");
+            }
+            finally
+            {
+                DetenerRefresco();
+            }
         }
 
         [RelayCommand]

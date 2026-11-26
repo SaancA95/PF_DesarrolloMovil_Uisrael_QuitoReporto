@@ -10,8 +10,12 @@
              Shell.TabBarIsVisible="False">
 
     <Grid RowDefinitions="*,Auto">
-        <ActivityIndicator IsRunning="{Binding Ocupado}" IsVisible="{Binding Ocupado}"
-                           VerticalOptions="Center" HorizontalOptions="Center" ZIndex="1" />
+        <!-- El contenedor es el que se oculta: en Android un ActivityIndicator con IsVisible e IsRunning
+             enlazados a la vez puede quedarse girando aunque la carga ya terminó -->
+        <ContentView IsVisible="{Binding Ocupado}" ZIndex="1" InputTransparent="True"
+                     VerticalOptions="Center" HorizontalOptions="Center">
+            <ActivityIndicator IsRunning="{Binding Ocupado}" />
+        </ContentView>
 
         <ScrollView IsVisible="{Binding Cargado}">
             <VerticalStackLayout Padding="24,16,24,24" Spacing="16">

@@ -54,8 +54,9 @@
                                     </DataTrigger>
                                 </Label.Triggers>
                             </Label>
-                            <ActivityIndicator Grid.Column="1" IsRunning="{Binding BuscandoDireccion}" IsVisible="{Binding BuscandoDireccion}"
-                                               HeightRequest="16" WidthRequest="16" Margin="8,0,0,0" />
+                            <ContentView Grid.Column="1" IsVisible="{Binding BuscandoDireccion}" Margin="8,0,0,0">
+                                <ActivityIndicator IsRunning="{Binding BuscandoDireccion}" HeightRequest="16" WidthRequest="16" />
+                            </ContentView>
                         </Grid>
                         <Label Text="{Binding TextoCoordenadas}" Style="{StaticResource TextoPequeno}" FontSize="16" />
                     </VerticalStackLayout>

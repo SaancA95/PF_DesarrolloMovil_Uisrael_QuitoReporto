@@ -53,8 +53,10 @@
                                TextColor="{StaticResource Rojo}" />
                         <Label Grid.Column="1" Text="Solo a 10 km de mí" FontSize="20" TextColor="{StaticResource Black}"
                                VerticalOptions="Center" />
-                        <ActivityIndicator Grid.Column="2" IsRunning="{Binding Ocupado}" IsVisible="{Binding Ocupado}"
-                                           Color="{StaticResource Rojo}" HeightRequest="18" WidthRequest="18" VerticalOptions="Center" />
+                        <ContentView Grid.Column="2" IsVisible="{Binding Ocupado}" VerticalOptions="Center">
+                            <ActivityIndicator IsRunning="{Binding Ocupado}" Color="{StaticResource Rojo}"
+                                               HeightRequest="18" WidthRequest="18" />
+                        </ContentView>
                         <Switch Grid.Column="3" IsToggled="{Binding SoloCercanos}" VerticalOptions="Center" />
                     </Grid>
                 </VerticalStackLayout>

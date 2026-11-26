@@ -78,7 +78,9 @@
                 <Label Text="{Binding Error}" Style="{StaticResource AuthTexto}" TextColor="White" />
             </Border>
 
-            <ActivityIndicator IsRunning="{Binding Ocupado}" IsVisible="{Binding Ocupado}" HeightRequest="24" Margin="0,16,0,0" />
+            <ContentView IsVisible="{Binding Ocupado}" Margin="0,16,0,0">
+                <ActivityIndicator IsRunning="{Binding Ocupado}" HeightRequest="24" />
+            </ContentView>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

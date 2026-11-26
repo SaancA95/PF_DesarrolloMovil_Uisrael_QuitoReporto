@@ -105,7 +105,9 @@
                 </Border>
             </VerticalStackLayout>
 
-            <ActivityIndicator IsRunning="{Binding Ocupado}" IsVisible="{Binding Ocupado}" HeightRequest="24" />
+            <ContentView IsVisible="{Binding Ocupado}">
+                <ActivityIndicator IsRunning="{Binding Ocupado}" HeightRequest="24" />
+            </ContentView>
 
             <Label Text="{Binding Version}" Style="{StaticResource TextoPequeno}" HorizontalOptions="Center" />
         </VerticalStackLayout>

@@ -160,10 +160,6 @@ namespace QuitoReporto.App.ViewModels.Auth
         [RelayCommand]
         private Task IrARegistroAsync() => Navegacion.IrAAsync(Rutas.Registro);
 
-        [RelayCommand]
-        private Task IrARecuperarAsync() =>
-            Navegacion.IrAAsync(Rutas.RecuperarClave, new Dictionary<string, object> { ["correo"] = Correo.Trim() });
-
         private Task IrAInicioAsync() =>
             Navegacion.IrAAsync(auth.UsuarioActual?.EsAdministrador == true ? Rutas.Admin : Rutas.Ciudadano);
     }

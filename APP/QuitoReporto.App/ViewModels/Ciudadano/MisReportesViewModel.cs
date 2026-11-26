@@ -26,9 +26,6 @@ namespace QuitoReporto.App.ViewModels.Ciudadano
         public partial OpcionEstado? EstadoSeleccionado { get; set; }
 
         [ObservableProperty]
-        public partial bool Refrescando { get; set; }
-
-        [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(TextoVacio))]
         public partial bool SinResultados { get; set; }
 
@@ -57,22 +54,29 @@ namespace QuitoReporto.App.ViewModels.Ciudadano
             }
         }
 
-        [RelayCommand]
+        // Ver PanelAdminViewModel.CargarAsync: evita que el spinner del RefreshView quede girando
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task CargarAsync()
         {
-            await EjecutarAsync(async () =>
+            try
             {
-                var lista = await reportes.ListarAsync(new FiltroReportes
+                await EjecutarAsync(async () =>
                 {
-                    SoloMios = true,
-                    Buscar = Buscar,
-                    Estado = EstadoSeleccionado?.Valor
-                });
-                Reportes.Clear();
-                foreach (var r in lista) Reportes.Add(r);
-                SinResultados = Reportes.Count == 0;
-            }, "No se pudieron cargar tus reportes");
-            Refrescando = false;
+                    var lista = await reportes.ListarAsync(new FiltroReportes
+                    {
+                        SoloMios = true,
+                        Buscar = Buscar,
+                        Estado = EstadoSeleccionado?.Valor
+                    });
+                    Reportes.Clear();
+                    foreach (var r in lista) Reportes.Add(r);
+                    SinResultados = Reportes.Count == 0;
+                }, "No se pudieron cargar tus reportes");
+            }
+            finally
+            {
+                DetenerRefresco();
+            }
         }
 
         [RelayCommand]

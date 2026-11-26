@@ -67,8 +67,6 @@
         </ScrollView>
 
         <VerticalStackLayout Grid.Row="1" Padding="0,8,0,28" Spacing="0" HorizontalOptions="Center">
-            <Button Text="Registrarse" Style="{StaticResource BotonEnlaceAuth}" Command="{Binding IrARegistroCommand}" />
-            <Button Text="¿Olvidaste tu contraseña?" Style="{StaticResource BotonEnlaceAuth}" Command="{Binding IrARecuperarCommand}" />
-        </VerticalStackLayout>
+            <Button Text="Registrarse" Style="{StaticResource BotonEnlaceAuth}" Command="{Binding IrARegistroCommand}" />        </VerticalStackLayout>
     </Grid>
 </ContentPage>

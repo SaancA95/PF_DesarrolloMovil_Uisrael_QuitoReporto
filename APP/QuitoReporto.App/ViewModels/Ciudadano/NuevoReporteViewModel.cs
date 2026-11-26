@@ -136,9 +136,10 @@ namespace QuitoReporto.App.ViewModels.Ciudadano
             Error = Validar();
             if (Error is not null) return;
 
+            Reporte? creado = null;
             await EjecutarAsync(async () =>
             {
-                var creado = await reportes.CrearAsync(new NuevoReporte
+                creado = await reportes.CrearAsync(new NuevoReporte
                 {
                     Titulo = Titulo.Trim(),
                     Descripcion = Descripcion.Trim(),
@@ -151,10 +152,22 @@ namespace QuitoReporto.App.ViewModels.Ciudadano
                 });
 
                 Limpiar();
+            }, "No se pudo enviar el reporte");
+
+            // La navegación va fuera de EjecutarAsync: si Shell tarda o no completa la navegación,
+            // el indicador de carga ya está apagado (antes quedaba girando aunque el reporte se guardó).
+            if (creado is null) return;
+            try
+            {
                 await Navegacion.MostrarAlertaAsync("¡Reporte enviado!", "Gracias por ayudar a mejorar Quito. Puedes seguir su avance en \"Mis reportes\".");
                 await Navegacion.IrAAsync(Rutas.MisReportes);
                 await Navegacion.IrAAsync(Rutas.Detalle, new Dictionary<string, object> { ["id"] = creado.Id });
-            }, "No se pudo enviar el reporte");
+            }
+            catch (Exception ex)
+            {
+                // El reporte ya se guardó; un fallo al navegar no debe mostrarse como error del envío
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
         }
 
         private string? Validar()
